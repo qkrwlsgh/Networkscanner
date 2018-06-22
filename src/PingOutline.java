@@ -173,6 +173,10 @@ public class PingOutline extends JFrame {
 	Image stopicon;
 	Image seticon;
 	Image listicon;
+	Image runicon;
+	Image runnoticon;
+	JLabel runLabel = null;
+	JLabel runnotLabel = null;
 	JButton startButton = null;
 	JButton stopButton = null;
 	JButton setButton = null;
@@ -200,28 +204,9 @@ public class PingOutline extends JFrame {
 	
 	
 	
-	rangeStartLabel.setFont(myFont);
-	rangeStartLabel.setPreferredSize(new Dimension(90, 30));
-	rangeEndLabel.setFont(myFont);
-	rangeEndLabel.setPreferredSize(new Dimension(90, 30));
-	HostnameLabel.setFont(myFont);
-	HostnameTextField.setPreferredSize(new Dimension(90, 30));
-	optioncombobox.setPreferredSize(new Dimension(90, 30));
-	IPButton.setPreferredSize(new Dimension(50, 30));
-	startButton.setPreferredSize(new Dimension(90, 30));
-	stopButton.setPreferredSize(new Dimension(90, 30));
 	
-	toolbar1.add(rangeStartLabel);
-	toolbar1.add(rangeStartTextField);
-	toolbar1.add(rangeEndLabel);
-	toolbar1.add(rangeEndTextField);
-	toolbar1.add(setButton);
-	toolbar2.add(HostnameLabel);
-	toolbar2.add(HostnameTextField);
-	toolbar2.add(IPButton);
-	toolbar2.add(optioncombobox);
-	toolbar2.add(startButton);
-	toolbar2.add(listButton);
+	
+	
 	
 	//tool bar end
 	
@@ -253,17 +238,47 @@ public class PingOutline extends JFrame {
 	
 	final JButton sb = startButton;
 	final JButton stb = stopButton;
+	final JButton lb = listButton;
+	
+	rangeStartLabel.setFont(myFont);
+	rangeStartLabel.setPreferredSize(new Dimension(90, 30));
+	rangeEndLabel.setFont(myFont);
+	rangeEndLabel.setPreferredSize(new Dimension(90, 30));
+	HostnameLabel.setFont(myFont);
+	HostnameTextField.setPreferredSize(new Dimension(90, 30));
+	optioncombobox.setPreferredSize(new Dimension(90, 30));
+	IPButton.setPreferredSize(new Dimension(50, 30));
+	sb.setPreferredSize(new Dimension(90, 30));
+	stb.setPreferredSize(new Dimension(90, 30));
+	toolbar1.add(rangeStartLabel);
+	toolbar1.add(rangeStartTextField);
+	toolbar1.add(rangeEndLabel);
+	toolbar1.add(rangeEndTextField);
+	toolbar1.add(setButton);
+	toolbar2.add(HostnameLabel);
+	toolbar2.add(HostnameTextField);
+	toolbar2.add(IPButton);
+	toolbar2.add(optioncombobox);
+	toolbar2.add(sb);
+	toolbar2.add(listButton);
+	
 	startButton.addActionListener(new ActionListener() {	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-				toolbar2.remove(sb);
-				toolbar2.add(stb);
-				readyLabel.setText("Please wait...");
-				jt.repaint();
+			toolbar2.remove(sb);
+			toolbar2.remove(lb);
+			toolbar2.add(stb);
+			toolbar2.add(lb);
+			readyLabel.setText("Please wait...");			
+				
+				
+
 				Thread lodingThread = new Thread() {
+					
 					@Override
 					public void run() {
+
+						jt.repaint();
 						int i;
 						 for ( i = 0; i <= 100; i++) {
 							 final int I=i;
@@ -290,8 +305,8 @@ public class PingOutline extends JFrame {
 							e2.printStackTrace();
 						}
 					String ip = myIP.substring(0,myIP.lastIndexOf(".") +1)+I;
-					String msg[] = {null, null, null, null, null};
-					msg[0] = ip;
+					Object msg[] = {null, null, null, null, null};
+					msg[0] = ip ;
 					Thread thread = new Thread() {
 						@Override
 						public void run() {
@@ -308,7 +323,8 @@ public class PingOutline extends JFrame {
 								boolean reachable = address.isReachable(250);
 								
 								if(reachable) {
-									jt.setValueAt(ip, I-1, 0);
+		
+									jt.setValueAt("¡Ü"+ip, I-1, 0);
 									
 									
 									while((line = br.readLine()) != null) {
@@ -363,7 +379,7 @@ public class PingOutline extends JFrame {
 									if (msg[4]==null)
 										jt.setValueAt("[n/s]", I-1, 4);
 								}else {
-									jt.setValueAt(ip, I-1, 0);
+									jt.setValueAt("¡Û"+ip, I-1, 0);
 									jt.setValueAt("[n/a]", I-1, 1);
 									jt.setValueAt("[n/s]", I-1, 2);
 									jt.setValueAt("[n/s]", I-1, 3);
@@ -382,12 +398,16 @@ public class PingOutline extends JFrame {
 						{
 							readyLabel.setText("Ready");
 							toolbar2.remove(stb);
+							toolbar2.remove(lb);
 							toolbar2.add(sb);
+							toolbar2.add(lb);
 						}
 						else
 						{
 							toolbar2.remove(stb);
+							toolbar2.remove(lb);
 							toolbar2.add(sb);
+							toolbar2.add(lb);
 						}
 						
 				}
@@ -395,16 +415,16 @@ public class PingOutline extends JFrame {
 			
 	});
 	
-	stopButton.addActionListener(new ActionListener() {
-
-		@Override
-		public void actionPerformed(ActionEvent se) {
-				toolbar2.remove(stb);
-				toolbar2.add(sb);
-				readyLabel.setText("Ready"); 
-				jt.repaint();
-			}
-	});
+//	stopButton.addActionListener(new ActionListener() {
+//
+//		@Override
+//		public void actionPerformed(ActionEvent se) {
+//				toolbar2.remove(stb);
+//				toolbar2.add(sb);
+//				readyLabel.setText("Ready"); 
+//				jt.repaint();
+//			}
+//	});
 }
 	
 	public Future<ScanResult> portIsOpen(final ExecutorService es, final String ip, final int port, final int timeout){
@@ -462,62 +482,7 @@ public class PingOutline extends JFrame {
 		Object[][] result = new Object[254][5];
 		return result;
 	}
-//	startButton.addActionListener(new ActionListener() {
-//		
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			new Thread(() -> {
-//				Pinging[] pg = new Pinging[255];
-//				
-//				// add
-//				toolbar2.remove(sb);
-//				toolbar2.add(stb);
-//				for(i=0;i<255;i++)
-//				{
-//					pg[i] = new Pinging( fixedIp + i);
-//					pg[i].start();
-//				}
-//				for(i=0;i<255;i++)
-//				{
-//					Object[] msg = pg[i].getMsg();
-//					stats[i][0] = msg[0];
-//					if(msg[1] != null)  stats[i][1] = msg[1];
-//					else stats[i][1] = "[n/a]";
-//					if(msg[2] != null)	stats[i][2] = msg[2];
-//					else if(msg[1] != null && msg[2] == null) stats[k][2] = "[n/a]";
-//					else stats[i][2] = "[n/s]";
-//					if (msg[3] != null) stats[i][3] = msg[3];
-//					else stats[i][3] = "[n/s]";
-//					
-//				}
-//			
-//				
-//			
-//				//scan value == null ¡æ stats[i][4] = "[n/s] "
-//				//scan value != null ¡æ assgin value stats[i][4] = "[n/s] "
-//			
-//			jt.repaint();
-//			
-//			
-//			}).start();
-//			new Thread(() -> {
-//				PortScanner[] ps = new PortScanner[255];
-//				for(i=0;i<255;i++)
-//				{
-//					Object[] msg = ps[i].getMsg();
-//					ps[i] = new PortScanner(fixedIp + i);
-//					ps[i].start();
-//					if(stats[i][1]!=null | stats[i][2]!=null | stats[i][3]!=null | stats[4]!=null)
-//						stats[i][4]=msg[4];
-//						else if(msg[1]!=null | msg[2]!=null | msg[3]!=null | msg[4]!=null)
-//							stats[i][4]="[n/s]";
-//				}
-//			}).start();
-//		}
-//		
-//		});
-//	
-//	}
+
 	
 	
 	public static void main(String[] args) {
